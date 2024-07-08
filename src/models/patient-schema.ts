@@ -12,7 +12,6 @@ import {
 
 dotenv.config();
 
-
 export interface IPatient extends Document {
   name: string;
   phone: number;
@@ -41,18 +40,17 @@ export interface IPatient extends Document {
   ratingSum: number;
   averageRating: number;
   comments: Array<object>;
-  //serviceNurse: string;
 }
 
 export const patientSchema = new Schema<IPatient>({
-  name: { type: String, required: true, unique: true }, //
-  phone: { type: Number, required: true, unique: true }, //
-  email: { type: String, required: true, unique: true }, //
+  name: { type: String, required: true, unique: true },
+  phone: { type: Number, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   verificationCode: { type: String },
   verified: { type: Boolean, default: false },
   type: { type: String, required: true },
-  demandingNewPassword: { type: String, default: false },
+  demandingNewPassword: { type: Boolean, default: false },
   online: { type: Boolean, default: false },
   token: { type: String },
   refreshToken: { type: String },
@@ -60,11 +58,10 @@ export const patientSchema = new Schema<IPatient>({
   profilePicture: { type: String },
   coverPicture: { type: String },
   reservationsRequests: { type: [reservationRequestsSchema], default: [] },
-  scheduleResevations: {type: [patientScheduleReservationSchema],default: [],},
+  scheduleResevations: { type: [patientScheduleReservationSchema], default: [] },
   patientStatus: { type: mongoose.Schema.Types.Mixed, default: false },
   nurseRequest: { type: mongoose.Schema.Types.Mixed, default: {} },
   requestTo: { type: [String], default: [] },
-  //serviceNurse: { type: String, default: "" },
   ratingNumber: { type: Number, default: 0 },
   ratingSum: { type: Number, default: 0 },
   averageRating: { type: Number, default: 0 },
@@ -81,13 +78,11 @@ export const patientSchema = new Schema<IPatient>({
 });
 
 patientSchema.pre("save", async function (next) {
-    if (this.isModified("password")) {
-        this.password = await bcrypt.hash(this.password, 10);
-    }
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
   next();
-})
+});
 
-const patientModel = mongoose.model<IPatient>("patient", patientSchema);
-
+const patientModel = mongoose.model<IPatient>("Patient", patientSchema);
 export default patientModel;
-

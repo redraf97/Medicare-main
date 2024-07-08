@@ -10,20 +10,19 @@ import {
 } from "./reservations-utils";
 dotenv.config();
 
-// Nurse interface
-export interface INurse {
+export interface INurse extends Document {
   name: string;
   specialite: string;
-  phone: Number;
+  phone: number;
   password: string;
   email: string;
   available: IAvailableTime[];
-  verificationCode: String | undefined;
+  verificationCode: string | undefined;
   verified: boolean;
   generateJWT: () => Promise<string>;
   type: string;
-  demandingNewPassword: Boolean;
-  online: Boolean;
+  demandingNewPassword: boolean;
+  online: boolean;
   token: string;
   refreshToken: string;
   tokenVersion: number;
@@ -42,20 +41,17 @@ export interface INurse {
   };
 }
 
-
-
-// Doctor schema
 const nurseSchema = new Schema<INurse>({
-  name: { type: String, required: true, unique: true }, //
+  name: { type: String, required: true, unique: true },
   specialite: { type: String, required: true },
-  phone: { type: Number, required: true, unique: true }, //
+  phone: { type: Number, required: true, unique: true },
   password: { type: String, required: true },
-  email: { type: String, required: true, unique: true }, //
+  email: { type: String, required: true, unique: true },
   available: { type: [AvailableTimeSchema], default: [] },
   verificationCode: { type: String },
   verified: { type: Boolean, default: false },
   type: { type: String, required: true },
-  demandingNewPassword: { type: String, default: false },
+  demandingNewPassword: { type: Boolean, default: false },
   online: { type: Boolean, default: false },
   token: { type: String },
   refreshToken: { type: String },
@@ -82,7 +78,6 @@ const nurseSchema = new Schema<INurse>({
 
 nurseSchema.index({ location: "2dsphere" });
 
-//hashing password before saving
 nurseSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 10);
@@ -90,9 +85,5 @@ nurseSchema.pre('save', async function (next) {
   next();
 });
 
-
-//create a model for schema
-const nurseModel = mongoose.model<INurse>('nurse', nurseSchema);
-
-//export model
+const nurseModel = mongoose.model<INurse>('Nurse', nurseSchema);
 export default nurseModel;
